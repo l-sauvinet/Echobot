@@ -1,0 +1,118 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Chat container */
+.chat-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+}
+
+/* Header style */
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Chat box style */
+#chat-box {
+    flex-grow: 1;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column; /* Important to ensure messages stack vertically */
+}
+
+/* Style for each message */
+.message {
+    max-width: 80%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 16px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    display: inline-block;
+    position: relative;
+    clear: both; /* Ensure messages do not overlap or float on the same line */
+}
+
+/* User message style */
+.user-message {
+    background-color: #d1e7ff;
+    margin-left: auto;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 20px;
+    align-self: flex-end; /* Align the user's message to the right */
+}
+
+/* Bot message style */
+.bot-message {
+    background-color: #f1f1f1;
+    margin-right: auto;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 20px;
+    align-self: flex-start; /* Align the bot's message to the left */
+}
+
+/* Input box style */
+input[type="text"] {
+    width: calc(100% - 22px); /* Full width minus padding */
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Send button style */
+button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Additional Styles for Smooth scrolling */
+#chat-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#chat-box::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

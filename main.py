@@ -1,88 +1,79 @@
+from flask import Flask, render_template, request, jsonify
+import wikipedia
+from deep_translator import GoogleTranslator
+import difflib
+from langdetect import detect
 import json
 import random
-import os
-import requests
-from bs4 import BeautifulSoup
+import wikipedia
 
-# Fonction pour charger les données des réponses
+app = Flask(__name__)
+
+# Fonction pour charger les données à partir de data.json
 def charger_donnees():
-    if os.path.exists('data/data.json'):
-        with open('data/data.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
+    with open('data/data.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-# Fonction pour sauvegarder les données dans le fichier
-def sauvegarder_donnees(donnees):
-    with open('data/data.json', 'w', encoding='utf-8') as f:
-        json.dump(donnees, f, indent=4, ensure_ascii=False)
-
-# Fonction pour répondre à une question
+# Fonction pour répondre en fonction de la question
 def repondre(question, donnees):
-    # Si la question existe déjà dans les données, répondre avec une réponse aléatoire
+    question = question.lower().strip()  # Met en minuscule pour éviter les soucis de casse
     if question in donnees:
         return random.choice(donnees[question])
     else:
-        # Si la question n'est pas dans les données, chercher sur Wikipedia
-        return obtenir_definition_wikipedia(question)
+        return wikipedia_summary(question)
 
-# Fonction pour obtenir une définition depuis Wikipedia
-def obtenir_definition_wikipedia(terme):
-    url = f"https://fr.wikipedia.org/w/api.php"
-    params = {
-        "action": "query",
-        "format": "json",
-        "prop": "extracts",
-        "exintro": True,
-        "titles": terme,
-        "exchars": 300
-    }
-    
-    response = requests.get(url, params=params)
-    data = response.json()
+# Fonction pour récupérer un résumé de Wikipedia
+def wikipedia_summary(question):
+    try:
+        # Traduire la question en anglais pour la recherche
+        question_en = GoogleTranslator(source='fr', target='en').translate(question)
+        wikipedia.set_lang("en")
 
-    pages = data.get("query", {}).get("pages", {})
-    page = next(iter(pages.values()), {})
+        # Essayer de récupérer un résumé direct
+        summary = wikipedia.summary(question_en, sentences=2)
+        return GoogleTranslator(source='en', target='fr').translate(summary)
 
-    if 'extract' in page:
-        # Nettoyer le texte HTML avec BeautifulSoup
-        extrait_html = page['extract']
-        extrait_texte = BeautifulSoup(extrait_html, 'html.parser').get_text()
-        return extrait_texte
-    else:
-        return "Je n'ai pas trouvé de définition pour ce terme sur Wikipedia."
+    except wikipedia.exceptions.DisambiguationError as e:
+        # Trouver la meilleure correspondance parmi les choix
+        best_match = difflib.get_close_matches(question_en, e.options, n=1, cutoff=0.2)
+        if best_match:
+            try:
+                summary = wikipedia.summary(best_match[0], sentences=2)
+                return GoogleTranslator(source='en', target='fr').translate(summary)
+            except:
+                pass
 
-# Fonction pour apprendre une nouvelle réponse
-def apprendre(question, nouvelle_reponse, donnees):
-    if question not in donnees:
-        donnees[question] = []
-    
-    # Ajouter la nouvelle réponse à la question
-    if nouvelle_reponse not in donnees[question]:
-        donnees[question].append(nouvelle_reponse)
-        sauvegarder_donnees(donnees)
-        print("Merci, j'ai appris quelque chose !")
-    else:
-        print("Cette réponse existe déjà.")
+        # Si aucune correspondance fiable, essayer manuellement le mot avec "country"
+        try:
+            alt_query = f"{question_en} (country)"
+            summary = wikipedia.summary(alt_query, sentences=2)
+            return GoogleTranslator(source='en', target='fr').translate(summary)
+        except:
+            pass
 
-# Exemple d'utilisation
-if __name__ == "__main__":
-    donnees = charger_donnees()  # Charger les données existantes
-    
-    print("EchoBot est prêt. Tape une phrase (ou 'stop' pour quitter).")
-    
-    while True:
-        # Demande à l'utilisateur de poser une question
-        question = input("Toi : ")
-        
-        if question.lower() == 'stop':
-            break
-        
-        # Obtenir une réponse
+        return "Il y a plusieurs significations possibles. Essayez d'être plus précis."
+
+    except wikipedia.exceptions.PageError:
+        return "Désolé, je n'ai pas trouvé de page correspondant à cette question."
+
+    except Exception as e:
+        return f"Une erreur est survenue : {str(e)}"
+# Route pour l'index
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Route pour gérer la question du chatbot
+@app.route('/ask', methods=['POST'])
+def ask():
+    question = request.form['question']
+    if question:
+        donnees = charger_donnees()
         reponse = repondre(question, donnees)
-        print(f"EchoBot : {reponse}")
-        
-        # Si le chatbot ne sait pas répondre, demander ce qu'il doit dire
-        if reponse == "Je n'ai pas trouvé de définition pour ce terme sur Wikipedia.":
-            print("Je ne sais pas encore répondre à ça. Que dois-je dire ?")
-            nouvelle_reponse = input("Ta réponse : ")
-            apprendre(question, nouvelle_reponse, donnees)
+    else:
+        reponse = "Veuillez poser une question."
+    return jsonify({"reponse": reponse})
+
+# Démarre le serveur Flask
+if __name__ == '__main__':
+    app.run(debug=True)

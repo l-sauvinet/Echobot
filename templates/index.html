@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echobot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Echobot</h1>
+        <div id="chat-box">
+            <!-- Les messages s'afficheront ici -->
+        </div>
+        <input type="text" id="user-input" placeholder="Posez votre question..." />
+        <button onclick="envoyerMessage()">Envoyer</button>
+    </div>
+
+    <script>
+        function envoyerMessage() {
+    const userInput = document.getElementById('user-input').value;
+    if (userInput.trim() === "") return; // Ne pas envoyer une question vide
+
+    // Afficher le message de l'utilisateur dans la zone de chat
+    const chatBox = document.getElementById('chat-box');
+    const userMessage = document.createElement('div');
+    userMessage.classList.add('message', 'user-message');
+    userMessage.textContent = "Vous : " + userInput;
+    chatBox.appendChild(userMessage);
+
+    // Effacer l'input
+    document.getElementById('user-input').value = "";
+
+    // Requête POST vers le serveur Python
+    fetch('/ask', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'question=' + encodeURIComponent(userInput)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Afficher la réponse du chatbot dans une bulle
+        const botMessage = document.createElement('div');
+        botMessage.classList.add('message', 'bot-message');
+        botMessage.textContent = "Echobot : " + data.reponse;
+        chatBox.appendChild(botMessage);
+
+        // Scroll vers le bas pour voir les nouveaux messages
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+    </script>
+</body>
+</html>

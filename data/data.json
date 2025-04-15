@@ -1,5 +1,22 @@
 {
-  "Bonjour": [
+  "hey": [
+      "Bonjour, comment vas-tu ?",
+      "Salut, comment ça va ?",
+      "Hello, comment ça va ?",
+      "Hey, comment ça va ?",
+      "Bonjour, que puis-je faire pour toi ?",
+      "Salut, que puis-je faire pour toi ?",
+      "Hello, que puis-je faire pour toi ?",
+      "Hey, que puis-je faire pour toi ?",
+      "Salutation, tu as besoin d'aide ?",
+      "Bonjour, comment puis-je t'aider ?",
+      "Salut, tout va bien ?",
+      "Hello, tout roule ?",
+      "Hey, prêt pour une nouvelle journée ?",
+      "Bonjour, quoi de neuf ?",
+      "Salut, comment puis-je t'assister ?"
+  ],
+  "bonjour": [
       "Bonjour, comment vas-tu ?",
       "Salut, comment ça va ?",
       "Hello, comment ça va ?",
@@ -33,24 +50,7 @@
       "Bonjour, c'est quoi de neuf ?",
       "Salut, comment puis-je t'assister ?"
   ],
-  "Hey": [
-      "Bonjour, comment vas-tu ?",
-      "Salut, comment ça va ?",
-      "Hello, comment ça va ?",
-      "Hey, comment ça va ?",
-      "Bonjour, que puis-je faire pour toi ?",
-      "Salut, que puis-je faire pour toi ?",
-      "Hello, que puis-je faire pour toi ?",
-      "Hey, que puis-je faire pour toi ?",
-      "Salutation, tu as besoin d'aide ?",
-      "Bonjour, comment puis-je t'aider ?",
-      "Salut, tout va bien ?",
-      "Hello, tout roule ?",
-      "Hey, prêt pour une nouvelle journée ?",
-      "Bonjour, quoi de neuf ?",
-      "Salut, comment puis-je t'assister ?"
-  ],
-  "Salut": [
+  "salut": [
       "Bonjour, comment vas-tu ?",
       "Salut, comment ça va ?",
       "Hello, comment ça va ?",
@@ -95,7 +95,7 @@
       "Ça va top, et toi ?",
       "Ça va super, merci ! Et toi ?"
   ],
-  "Hello, comment vas-tu?": [
+  "hello, comment vas-tu?": [
       "Hey, ça va super et toi ?",
       "Salut, ça va super et toi ?",
       "Bonjour, ça va super et toi ?",
